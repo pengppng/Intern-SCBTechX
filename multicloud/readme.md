@@ -5,4 +5,4 @@ terraform init
 terraform plan -var="project=<your-project-id>"
 
 # Apply the changes
-terraform apply -var="project=<your-project-id>"
+terraform apply -var="project=<your-project-id>"c

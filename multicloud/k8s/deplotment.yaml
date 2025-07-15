@@ -20,7 +20,7 @@ test:
     - pip install -r requirements.txt
     - pytest
 
-# Deploy stage
+# Deploy stage on google kubernetes
 deploy:
   stage: deploy
   image: google/cloud-sdk:alpine
