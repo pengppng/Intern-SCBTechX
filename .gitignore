@@ -31,3 +31,16 @@ coverage/
 
 # Mac system files
 .DS_Store
+
+# Google Cloud SDK (only if inside repo)
+google-cloud-sdk/
+.gcloud/
+.config/gcloud/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.backup
+.terraform.lock.hcl
