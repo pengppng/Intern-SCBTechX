@@ -1,0 +1,33 @@
+stages:
+  - build
+  - test
+  - deploy
+
+# Build stage containerized using Docker
+build:
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+# Test stage using pytest
+test:
+  stage: test
+  image: python:3.8
+  script:
+    - pip install -r requirements.txt
+    - pytest
+
+# Deploy stage on google Kubernetes Engine (GKE)
+deploy:
+  stage: deploy
+  image: google/cloud-sdk:alpine
+  script:
+    - gcloud auth activate-service-account --key-file $GCLOUD_SERVICE_KEY
+    - gcloud container clusters get-credentials $GKE_CLUSTER --region $GKE_REGION
+    - kubectl apply -f k8s/deployment.yaml
+    - kubectl apply -f k8s/service.yaml
+  environment:
+    name: production
