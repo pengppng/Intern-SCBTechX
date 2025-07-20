@@ -16,6 +16,36 @@ module "vpc" {
   enable_dns_hostnames    = true
 }
 
+resource "aws_security_group" "allow_http_ssh" {
+  name        = "allow_http_ssh"
+  description = "Allow HTTP and SSH"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Allow SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true
@@ -29,11 +59,18 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "app_server" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
+  ami                    = data.aws_ami.ubuntu.id
+  instance_type          = var.instance_type
+  subnet_id              = module.vpc.public_subnets[0]
+  vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
 
-  vpc_security_group_ids = [module.vpc.default_security_group_id]
-  subnet_id              = module.vpc.private_subnets[0]
+  user_data = <<-EOF
+              #!/bin/bash
+              apt update -y
+              apt install nginx -y
+              systemctl start nginx
+              echo "<h1>Hello from Terraform $(hostname)</h1>" > /var/www/html/index.html
+              EOF
 
   tags = {
     Name = var.instance_name
