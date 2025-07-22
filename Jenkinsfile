@@ -16,29 +16,29 @@ pipeline {
       }
     }
 
-    stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t $ECR_REPO .'
-      }
-    }
+    // stage('Build Docker Image') {
+    //   steps {
+    //     sh 'docker build -t $ECR_REPO .'
+    //   }
+    // }
 
-    stage('Login to ECRs') {
-      steps {
-        sh '''
-          aws ecr get-login-password --region $AWS_REGION \
-          | docker login --username AWS --password-stdin $ECR_URI
-        '''
-      }
-    }
+    // stage('Login to ECRs') {
+    //   steps {
+    //     sh '''
+    //       aws ecr get-login-password --region $AWS_REGION \
+    //       | docker login --username AWS --password-stdin $ECR_URI
+    //     '''
+    //   }
+    // }
 
-    stage('Tag and Push Image to ECR') {
-      steps {
-        sh '''
-          docker tag $ECR_REPO:latest $ECR_URI:latest
-          docker push $ECR_URI:latest
-        '''
-      }
-    }
+    // stage('Tag and Push Image to ECR') {
+    //   steps {
+    //     sh '''
+    //       docker tag $ECR_REPO:latest $ECR_URI:latest
+    //       docker push $ECR_URI:latest
+    //     '''
+    //   }
+    // }
 
     stage('Terraform Init and Apply') {
       steps {
@@ -49,13 +49,13 @@ pipeline {
       }
     }
 
-    stage('Deploy to EKS') {
-      steps {
-        sh '''
-          aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-          kubectl apply -f k8s-deployment.yaml
-        '''
-      }
-    }
+    // stage('Deploy to EKS') {
+    //   steps {
+    //     sh '''
+    //       aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+    //       kubectl apply -f k8s-deployment.yaml
+    //     '''
+    //   }
+    // }
   }
 }
