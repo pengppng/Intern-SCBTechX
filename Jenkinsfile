@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git 'https://github.com/your-org/preecr-project.git' // เปลี่ยนตามจริง
+        git 'https://github.com/pengppng/intern-techx-.git'
       }
     }
 
