@@ -44,7 +44,7 @@ pipeline {
       steps {
         dir('terraform') {
           sh 'terraform init'
-          sh 'terraform plan -out=tfplan'
+          sh 'terraform version
         //   sh 'terraform apply -auto-approve'
         }
       }
