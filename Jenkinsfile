@@ -16,11 +16,11 @@ pipeline {
     //   }
     // }
 
-    // stage('Build Docker Image') {
-    //   steps {
-    //     sh 'docker build -t $ECR_REPO .'
-    //   }
-    // }
+    stage('Build Docker Image') {
+      steps {
+        sh 'docker build -t $ECR_REPO .'
+      }
+    }
 
     // stage('Login to ECRs') {
     //   steps {
