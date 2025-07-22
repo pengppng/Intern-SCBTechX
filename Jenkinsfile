@@ -2,61 +2,46 @@ pipeline {
   agent any
 
   environment {
-    AWS_REGION = "ap-southeast-1"
-    ECR_REPO   = "preecr"
-    AWS_ACCOUNT_ID = "871762481972"
-    ECR_URI    = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
-    CLUSTER_NAME = "preecr-cluster"
+    AWS_REGION = 'ap-southeast-1'
+    ECR_REPO_NAME = 'preecr'
+    IMAGE_TAG = 'latest'
   }
 
   stages {
-    // stage('Checkout') {
-    //   steps {
-    //     git 'https://github.com/pengppng/intern-techx-.git'
-    //   }
-    // }
+    stage('Terraform Init & Apply (Create ECR)') {
+      steps {
+        sh '''
+          terraform init
+          terraform apply -auto-approve
+        '''
+      }
+    }
+
+    stage('Login to ECR') {
+      steps {
+        sh '''
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --region $AWS_REGION --query "repositories[0].repositoryUri" --output text | cut -d '/' -f 1)
+        '''
+      }
+    }
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t $ECR_REPO .'
+        sh '''
+          ECR_URI=$(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
+          docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
+          docker tag $ECR_REPO_NAME:$IMAGE_TAG $ECR_URI:$IMAGE_TAG
+        '''
       }
     }
 
-    // stage('Login to ECRs') {
-    //   steps {
-    //     sh '''
-    //       aws ecr get-login-password --region $AWS_REGION \
-    //       | docker login --username AWS --password-stdin $ECR_URI
-    //     '''
-    //   }
-    // }
-
-    // stage('Tag and Push Image to ECR') {
-    //   steps {
-    //     sh '''
-    //       docker tag $ECR_REPO:latest $ECR_URI:latest
-    //       docker push $ECR_URI:latest
-    //     '''
-    //   }
-    // }
-
-    stage('Terraform Init and Apply') {
+    stage('Push to ECR') {
       steps {
-        dir('terraform') {
-          sh 'terraform init'
-          sh 'terraform version'
-        //   sh 'terraform apply -auto-approve'
-        }
+        sh '''
+          ECR_URI=$(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
+          docker push $ECR_URI:$IMAGE_TAG
+        '''
       }
     }
-
-    // stage('Deploy to EKS') {
-    //   steps {
-    //     sh '''
-    //       aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
-    //       kubectl apply -f k8s-deployment.yaml
-    //     '''
-    //   }
-    // }
   }
 }
