@@ -9,12 +9,12 @@ pipeline {
     CLUSTER_NAME = "preecr-cluster"
   }
 
-//   stages {
-//     stage('Checkout') {
-//       steps {
-//         git 'https://github.com/pengppng/intern-techx-.git'
-//       }
-//     }
+  stages {
+    // stage('Checkout') {
+    //   steps {
+    //     git 'https://github.com/pengppng/intern-techx-.git'
+    //   }
+    // }
 
     // stage('Build Docker Image') {
     //   steps {
