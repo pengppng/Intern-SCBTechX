@@ -32,24 +32,5 @@ pipeline {
         }
       }
     }
-
-    stage('Build Docker Image') {
-      steps {
-        sh '''
-          ECR_URI=$(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
-          docker build -t $ECR_REPO_NAME:$IMAGE_TAG .
-          docker tag $ECR_REPO_NAME:$IMAGE_TAG $ECR_URI:$IMAGE_TAG
-        '''
-      }
-    }
-
-    stage('Push to ECR') {
-      steps {
-        sh '''
-          ECR_URI=$(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --region $AWS_REGION --query "repositories[0].repositoryUri" --output text)
-          docker push $ECR_URI:$IMAGE_TAG
-        '''
-      }
-    }
   }
 }
