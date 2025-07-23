@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "ap-southeast-1" # change if needed
+  region = "ap-southeast-1"
 }
 
 resource "aws_ecr_repository" "preecr" {
