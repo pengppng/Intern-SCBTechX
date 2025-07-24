@@ -1,3 +1,14 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 6.5.0"
+    }
+  }
+
+  required_version = ">= 1.5.0"
+}
+
 provider "aws" {
   region = "ap-southeast-1"
 }
@@ -34,7 +45,7 @@ resource "aws_ecr_lifecycle_policy" "preecr_policy" {
 }
 
 # ------------------------------------
-# ✅ เพิ่มส่วน VPC สำหรับ EKS
+# ✅ เพิ่ม VPC สำหรับ EKS
 # ------------------------------------
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
