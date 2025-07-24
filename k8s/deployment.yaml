@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: preecr
-          image: <your-account-id>.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+          image: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
           ports:
             - containerPort: 80
 ---
