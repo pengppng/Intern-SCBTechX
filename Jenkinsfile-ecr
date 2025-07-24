@@ -9,8 +9,8 @@ pipeline {
 
   stages {
     stage('Install AWS CLI & Terraform') {
-  steps {
-    sh '''
+      steps {
+      sh '''
       echo "===> Installing AWS CLI & Terraform"
       apk add --no-cache curl unzip python3 py3-pip bash aws-cli
 
@@ -19,36 +19,38 @@ pipeline {
       mv terraform /usr/local/bin/
       terraform version
       aws --version
-    '''
-  }
-}
-
+      '''
+      }
+    }
 
     stage('Terraform Init & Apply (Create ECR)') {
       steps {
-        withCredentials([
-          usernamePassword(
-            credentialsId: 'aws-credentials',
-            usernameVariable: 'AWS_ACCESS_KEY_ID',
-            passwordVariable: 'AWS_SECRET_ACCESS_KEY'
-          )
-        ]) {
-          sh '''
-            echo "===> START Terraform Apply"
+        dir('terraform-ecr') {
+          withCredentials([
+            usernamePassword(
+              credentialsId: 'aws-credentials',
+              usernameVariable: 'AWS_ACCESS_KEY_ID',
+              passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+            )
+          ]) {
+            sh '''
+              echo "===> START Terraform Apply"
 
-            export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+              export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+              export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 
-            terraform init
-            terraform apply -auto-approve \
-              -var="repository_name=$ECR_REPO_NAME" \
-              -var="lifecycle_policy=lifecycle-policy.json"
+              terraform init
+              terraform apply -auto-approve \
+                -var="repository_name=$ECR_REPO_NAME" \
+                -var="lifecycle_policy=lifecycle-policy.json"
 
-            echo "===> DONE Terraform Apply"
-          '''
+              echo "===> DONE Terraform Apply"
+            '''
+          }
         }
       }
     }
+    
 
     stage('Build & Push Docker to ECR') {
       steps {
