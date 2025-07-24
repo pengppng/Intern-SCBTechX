@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'docker:25.0.3-cli'
-      args '-v /var/run/docker.sock:/var/run/docker.sock --entrypoint=""'
-    }
-  }
+  agent any
 
   environment {
     AWS_REGION    = 'ap-southeast-1'
