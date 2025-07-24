@@ -1,12 +1,16 @@
 terraform {
+  required_version = ">= 1.0.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      
+      version = ">= 4.0, < 6.0.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
     }
   }
-
-  required_version = ">= 1.5.0"
 }
 
 provider "aws" {
@@ -71,23 +75,27 @@ module "vpc" {
 # ------------------------------------
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.11.0"
+  version = "~> 19.15"
 
-  cluster_name = "preecr-cluster"
-  cluster_version = "1.30"
-  subnet_ids      = module.vpc.private_subnets
-  vpc_id          = module.vpc.vpc_id
+  cluster_name    = "preecr-cluster"
+  cluster_version = "1.27"
 
-  enable_irsa = true
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  enable_cluster_creator_admin_permissions = true
+
+  eks_managed_node_group_defaults = {
+    instance_types = ["t3.small"]
+    disk_size      = 20
+    capacity_type  = "ON_DEMAND"
+  }
 
   eks_managed_node_groups = {
-    default = {
+    preecr = {
       desired_size = 1
-      max_size     = 2
       min_size     = 1
-
-      instance_types = ["t3.medium"]
-      capacity_type  = "ON_DEMAND"
+      max_size     = 2
     }
   }
 
@@ -96,6 +104,7 @@ module "eks" {
     Terraform   = "true"
   }
 }
+
 
 output "ecr_repo_url" {
   value = aws_ecr_repository.preecr.repository_url
