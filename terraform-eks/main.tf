@@ -49,6 +49,7 @@ module "eks" {
 
   create_kms_key            = false
   enable_cluster_encryption = false
+  cluster_encryption_config = []
 
   eks_managed_node_group_defaults = {
     instance_types = ["t3.small"]
