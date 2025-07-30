@@ -47,9 +47,8 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
-  create_kms_key            = false
-  enable_cluster_encryption = false
-  cluster_encryption_config = []
+  create_kms_key              = false
+  cluster_encryption_config   = []
 
   eks_managed_node_group_defaults = {
     instance_types = ["t3.small"]
@@ -70,6 +69,7 @@ module "eks" {
     Terraform   = "true"
   }
 }
+
 
 output "cluster_name" {
   value = module.eks.cluster_name
