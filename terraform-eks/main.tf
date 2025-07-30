@@ -47,6 +47,9 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  create_kms_key            = false
+  enable_cluster_encryption = false
+
   eks_managed_node_group_defaults = {
     instance_types = ["t3.small"]
     disk_size      = 20
