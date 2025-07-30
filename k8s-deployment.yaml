@@ -14,7 +14,9 @@ spec:
     spec:
       containers:
       - name: preecr
-        image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+        # image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:v110
+        image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr@sha256:15e1916615d043b2c5af24567904aba846f827eede1b7d209c08bc3f65d5b37a
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
 ---
