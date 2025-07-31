@@ -55,7 +55,6 @@ module "eks" {
     instance_types = ["t3.small"]
     disk_size      = 20
     capacity_type  = "ON_DEMAND"
-    ami_id         = "ami-0a4417787670acffc"
   }
 
   eks_managed_node_groups = {
