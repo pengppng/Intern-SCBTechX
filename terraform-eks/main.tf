@@ -48,6 +48,16 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
   cluster_endpoint_public_access  = true
 
+  enable_irsa        = true
+  manage_aws_auth    = true
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::123456789012:user/admintest"
+      username = "jenkins"
+      groups   = ["system:masters"]
+    }
+  ]
+
   create_kms_key              = false
   cluster_encryption_config   = []
 
@@ -73,13 +83,13 @@ module "eks" {
 
 
 output "cluster_name" {
-  value = module.eks.cluster_name
+  value = aws_eks_cluster.this.name
 }
 
 output "cluster_endpoint" {
-  value = module.eks.cluster_endpoint
+  value = aws_eks_cluster.this.endpoint
 }
 
 output "cluster_security_group_id" {
-  value = module.eks.cluster_security_group_id
+  value = aws_eks_cluster.this.vpc_config[0].cluster_security_group_id
 }
