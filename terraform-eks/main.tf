@@ -52,16 +52,7 @@ module "eks" {
 
   create_kms_key              = false
   cluster_encryption_config   = []
-  manage_aws_auth = true
-
-aws_auth_users = [
-  {
-    userarn  = "arn:aws:iam::871762481972:user/admintest"
-    username = "peng"
-    groups   = ["system:masters"]
-  }
-]
-
+  
 
   eks_managed_node_group_defaults = {
     instance_types = ["t3.small"]
