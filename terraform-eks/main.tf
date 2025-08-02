@@ -36,6 +36,22 @@ module "vpc" {
     Environment = "dev"
   }
 }
+module "eks_aws_auth" {
+  source  = "terraform-aws-modules/eks/aws-auth/aws"
+  version = "~> 1.0"
+
+  depends_on = [module.eks]
+
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::123456789012:user/admintest"
+      username = "jenkins"
+      groups   = ["system:masters"]
+    }
+  ]
+
+  eks_cluster_name = module.eks.cluster_name
+}
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -49,14 +65,6 @@ module "eks" {
   cluster_endpoint_public_access  = true
 
   enable_irsa        = true
-  manage_aws_auth    = true
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::123456789012:user/admintest"
-      username = "jenkins"
-      groups   = ["system:masters"]
-    }
-  ]
 
   create_kms_key              = false
   cluster_encryption_config   = []
