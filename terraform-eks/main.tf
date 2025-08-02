@@ -36,22 +36,6 @@ module "vpc" {
     Environment = "dev"
   }
 }
-module "eks_aws_auth" {
-  source  = "terraform-aws-modules/eks/aws-auth/aws"
-  version = "~> 1.0"
-
-  depends_on = [module.eks]
-
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::123456789012:user/admintest"
-      username = "jenkins"
-      groups   = ["system:masters"]
-    }
-  ]
-
-  eks_cluster_name = module.eks.cluster_name
-}
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
@@ -89,6 +73,22 @@ module "eks" {
   }
 }
 
+module "eks_aws_auth" {
+  source  = "terraform-aws-modules/eks/aws-auth/aws"
+  version = "~> 1.0"
+
+  depends_on = [module.eks]
+
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::123456789012:user/admintest"
+      username = "jenkins"
+      groups   = ["system:masters"]
+    }
+  ]
+
+  eks_cluster_name = module.eks.cluster_name
+}
 
 output "cluster_name" {
   value = aws_eks_cluster.this.name
