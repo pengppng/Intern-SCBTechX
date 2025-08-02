@@ -74,7 +74,7 @@ module "eks" {
 }
 
 module "eks_aws_auth" {
-  source  = "terraform-aws-modules/eks/aws-auth/aws"
+  source  = "terraform-aws-modules/eks/aws-auth"
   version = "~> 1.0"
 
   depends_on = [module.eks]
