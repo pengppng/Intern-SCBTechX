@@ -57,7 +57,7 @@ module "eks" {
 aws_auth_users = [
   {
     userarn  = "arn:aws:iam::871762481972:user/admintest"
-    username = "jenkins"
+    username = "peng"
     groups   = ["system:masters"]
   }
 ]
