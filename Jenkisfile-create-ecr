@@ -27,6 +27,7 @@ pipeline {
               export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
 
               terraform init
+              terraform plan
               terraform apply -auto-approve \
                 -var="repository_name=${params.ECR_REPO_NAME}" \
                 -var="lifecycle_policy=lifecycle-policy.json"
