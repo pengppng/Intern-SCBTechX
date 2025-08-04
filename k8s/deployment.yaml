@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: preecr
-          image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+          image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:v1
           ports:
             - containerPort: 80
           resources:

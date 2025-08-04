@@ -11,6 +11,7 @@ pipeline {
           usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')
         ]) {
           sh '''
+            aws sts get-caller-identity
             echo "===> Deploying Kubernetes manifests"
             kubectl apply -f $DEPLOY_PATH/deployment.yaml
           '''
