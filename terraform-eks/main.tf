@@ -44,7 +44,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "`~> 20.31"
+  version = "~> 20.31"
 
   cluster_name    = "preecr-cluster"
   cluster_version = "1.33"
