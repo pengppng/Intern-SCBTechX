@@ -3,3 +3,6 @@ k8s-deployment.yaml
 
 # Ignore HTML file
 index.html
+
+/terraform-ecr/.terraform*
+/terraform-ecr/terraform.tfstate
