@@ -1,10 +1,4 @@
 terraform {
-  required_version = ">= 1.0.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-    }
-  }
   backend "s3" {
     bucket         = "png-terraform-state-bucket"
     key            = "eks/terraform.tfstate"
@@ -14,62 +8,31 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region = "ap-southeast-1"
 }
 
-variable "aws_region" {
-  type    = string
-  default = "ap-southeast-1"
-}
-
+# VPC Module
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "4.0.2"
+  version = "~> 5.0"
 
-  name                 = "eks-vpc"
-  cidr                 = "10.0.0.0/16"
-  azs                  = ["${var.aws_region}a", "${var.aws_region}b"]
-  private_subnets      = ["10.0.1.0/24", "10.0.2.0/24"]
-  public_subnets       = ["10.0.11.0/24", "10.0.12.0/24"]
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+  name = "my-vpc"
+  cidr = "10.0.0.0/16"
 
-  tags = {
-    Environment = "dev"
-  }
-}
+  # azs             = ["ap-southeast-1a", "ap-southeast-1b", "ap-southeast-1c"]
+  # private_subnets = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+  # public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"
+  azs             = ["ap-southeast-1a", "ap-southeast-1b"]
+  private_subnets = ["10.0.1.0/24","10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24","10.0.102.0/24"]
 
-  name    = "preecr-cluster"
-  kubernetes_version = "1.33"
-
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-  endpoint_public_access  = true
-
-  enable_irsa        = true
-
-  eks_managed_node_group_defaults = {
-    instance_types = ["t3.small"]
-    disk_size      = 20
-    capacity_type  = "ON_DEMAND"
-  }
-
-  eks_managed_node_groups = {
-    default = {
-      desired_size = 1
-      min_size     = 1
-      max_size     = 2
-    }
-  }
+  enable_nat_gateway = true
+  single_nat_gateway = true
+  enable_vpn_gateway = false
 
   tags = {
-    Environment = "dev"
     Terraform   = "true"
+    Environment = "dev"
   }
 }
