@@ -4,7 +4,6 @@ pipeline {
   environment {
     AWS_REGION    = 'ap-southeast-1'
   }
-
   parameters {
     string(name: 'ECR_REPO_NAME', defaultValue: 'preecr', description: 'Name of the ECR repository to create')
   }
