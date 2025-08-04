@@ -1,0 +1,42 @@
+pipeline {
+  agent any
+
+  environment {
+    AWS_REGION    = 'ap-southeast-1'
+  }
+
+  parameters {
+    string(name: 'ECR_REPO_NAME', defaultValue: 'preecr', description: 'Name of the ECR repository to create')
+  }
+
+  stages {
+    stage('Terraform Init & Apply (Create ECR)') {
+      steps {
+        dir('terraform-ecr') {
+          withCredentials([
+            usernamePassword(
+              credentialsId: 'aws-credentials',
+              usernameVariable: 'AWS_ACCESS_KEY_ID',
+              passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+            )
+          ]) {
+            sh '''
+              echo "===> START Terraform Apply"
+
+              export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+              export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+
+              terraform init
+              terraform apply -auto-approve \
+                -var="repository_name=${params.ECR_REPO_NAME}" \
+                -var="lifecycle_policy=lifecycle-policy.json"
+
+              echo "===> DONE Terraform Apply"
+            '''
+          }
+        }
+      }
+    }
+    
+  }
+}
