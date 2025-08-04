@@ -42,22 +42,21 @@ module "vpc" {
   }
 }
 
+vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.31"
+  version = "~> 21.0"
 
-  cluster_name    = "preecr-cluster"
-  cluster_version = "1.33"
+  name    = "preecr-cluster"
+  kubernetes_version = "1.33"
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
-  cluster_endpoint_public_access  = true
+  endpoint_public_access  = true
 
   enable_irsa        = true
-
-  create_kms_key              = false
-  cluster_encryption_config   = []
-  
 
   eks_managed_node_group_defaults = {
     instance_types = ["t3.small"]
@@ -78,18 +77,3 @@ module "eks" {
     Terraform   = "true"
   }
 }
-
-
-
-output "cluster_name" {
-  value = module.eks.cluster_name
-}
-
-output "cluster_endpoint" {
-  value = module.eks.cluster_endpoint
-}
-
-output "cluster_security_group_id" {
-  value = module.eks.cluster_security_group_id
-}
-
