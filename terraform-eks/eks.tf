@@ -23,6 +23,16 @@ module "eks" {
   }
 
   enable_irsa = true
+  manage_aws_auth_configmap = true
+
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::871762481972:user/admintest"
+      username = "admintest"
+      groups   = ["system:masters"]
+    }
+  ]
+
 
   tags = {
     Terraform   = "true"
