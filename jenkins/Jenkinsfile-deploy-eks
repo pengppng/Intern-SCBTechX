@@ -11,10 +11,21 @@ pipeline {
           usernamePassword(credentialsId: 'aws-credentials', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')
         ]) {
           sh '''
-            aws sts get-caller-identity
+            aws eks update-kubeconfig \
+            --region ap-southeast-1 \
+            --name my-eks-cluster
+            
+            docker tag preecr:latest 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+            docker push 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+            
+            
             echo "===> Deploying Kubernetes manifests"
             kubectl apply -f $DEPLOY_PATH/deployment.yaml
+            
+            kubectl get pod
+            kubectl get service
           '''
+          // aws sts get-caller-identity
         }
       }
     }
