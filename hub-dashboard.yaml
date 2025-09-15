@@ -1,0 +1,237 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hub-html
+  namespace: hub
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>PNG Monitoring Hub</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 40px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            }
+            h1 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 50px;
+                font-size: 3em;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            }
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+                margin-top: 40px;
+            }
+            .card {
+                background: #f8f9fa;
+                border-radius: 15px;
+                padding: 30px;
+                text-align: center;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+            .card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+                border-color: #667eea;
+            }
+            .card h3 {
+                color: #333;
+                margin-bottom: 15px;
+                font-size: 1.5em;
+            }
+            .card p {
+                color: #666;
+                margin-bottom: 25px;
+                line-height: 1.6;
+            }
+            .card a {
+                display: inline-block;
+                padding: 15px 30px;
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                color: white;
+                text-decoration: none;
+                border-radius: 50px;
+                font-weight: bold;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .card a:hover {
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            }
+            .monitoring { border-left: 5px solid #28a745; }
+            .logging { border-left: 5px solid #ffc107; }
+            .metrics { border-left: 5px solid #17a2b8; }
+            .search { border-left: 5px solid #6f42c1; }
+            .footer {
+                text-align: center;
+                margin-top: 50px;
+                color: #666;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚀 PNG Monitoring Hub</h1>
+            
+            <div class="grid">
+                <div class="card monitoring">
+                    <h3>📊 Grafana</h3>
+                    <p>Dashboard และ visualization สำหรับ monitoring metrics</p>
+                    <a href="/grafana" target="_blank">เปิด Grafana</a>
+                </div>
+                
+                <div class="card monitoring">
+                    <h3>🔍 Prometheus</h3>
+                    <p>Time-series database สำหรับเก็บ metrics</p>
+                    <a href="/prometheus" target="_blank">เปิด Prometheus</a>
+                </div>
+                
+                <div class="card logging">
+                    <h3>📝 Loki</h3>
+                    <p>Log aggregation system สำหรับรวบรวม logs</p>
+                    <a href="/loki" target="_blank">เปิด Loki</a>
+                </div>
+                
+                <div class="card metrics">
+                    <h3>📈 cAdvisor</h3>
+                    <p>Container metrics และ resource usage</p>
+                    <a href="/cadvisor" target="_blank">เปิด cAdvisor</a>
+                </div>
+                
+                <div class="card search">
+                    <h3>🔎 Elasticsearch</h3>
+                    <p>Search และ analytics engine สำหรับ data</p>
+                    <a href="/elasticsearch" target="_blank">เปิด Elasticsearch</a>
+                </div>
+                
+                <div class="card search">
+                    <h3>📋 Kibana</h3>
+                    <p>Data visualization สำหรับ Elasticsearch</p>
+                    <a href="/kibana" target="_blank">เปิด Kibana</a>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p>🌟 PNG Monitoring Stack - ทุก services พร้อมใช้งาน</p>
+            </div>
+        </div>
+    </body>
+    </html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hub
+  namespace: hub
+  labels:
+    app: hub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hub
+  template:
+    metadata:
+      labels:
+        app: hub
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+      volumes:
+      - name: html
+        configMap:
+          name: hub-html
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: hub
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name png.pickme;
+        root /usr/share/nginx/html;
+        index index.html;
+
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+
+        # เพิ่มการจัดการ path-based routing สำหรับบริการต่างๆ
+        location /grafana {
+            proxy_pass http://grafana-proxy:80;
+        }
+
+        location /prometheus {
+            proxy_pass http://prometheus-proxy:80;
+        }
+
+        location /cadvisor {
+            proxy_pass http://cadvisor-proxy:8080;
+        }
+
+        location /elasticsearch {
+            proxy_pass http://elasticsearch-proxy:9200;
+        }
+
+        location /kibana {
+            proxy_pass http://kibana-proxy:5601;
+        }
+
+        location /loki {
+            proxy_pass http://loki-proxy:3100;
+        }
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hub
+  namespace: hub
+  labels:
+    app: hub
+spec:
+  selector:
+    app: hub
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
