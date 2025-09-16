@@ -1,0 +1,100 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: png-pickme-ingress
+  namespace: hub
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      # Hub Dashboard - หน้าหลัก
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hub
+            port:
+              number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: png-pickme-logging-ingress
+  namespace: logging
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      # Elasticsearch
+      - path: /elasticsearch(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: elasticsearch
+            port:
+              number: 9200
+      # Kibana
+      - path: /kibana(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: kibana
+            port:
+              number: 5601
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: png-pickme-monitoring-ingress
+  namespace: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      # Grafana (cross-namespace reference)
+      - path: /grafana(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 80
+      # Prometheus (cross-namespace reference)
+      - path: /prometheus(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: prometheus-server
+            port:
+              number: 80
+      # Loki (cross-namespace reference)
+      - path: /loki(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: loki-stack
+            port:
+              number: 3100
+      # cAdvisor (cross-namespace reference)  
+      - path: /cadvisor(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: cadvisor
+            port:
+              number: 8080

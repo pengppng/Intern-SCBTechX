@@ -7,13 +7,13 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: png.prometheus
+  - host: png.pickme
     http:
       paths:
-      - path: /
+      - path: /prometheus
         pathType: Prefix
         backend:
           service:
-            name: prometheus
+            name: prometheus-server
             port:
-              number: 9090
+              number: 80

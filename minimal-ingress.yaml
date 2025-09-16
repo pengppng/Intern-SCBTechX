@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: png-pickme-minimal
+  namespace: hub
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      # Default homepage - hub dashboard
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hub
+            port:
+              number: 80
+      # Grafana
+      - path: /grafana(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: grafana-proxy
+            port:
+              number: 80
+      # Prometheus
+      - path: /prometheus(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: prometheus-proxy
+            port:
+              number: 80
+      # cAdvisor
+      - path: /cadvisor(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: cadvisor-proxy
+            port:
+              number: 8080

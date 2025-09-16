@@ -7,10 +7,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: png.cadvisor
+  - host: png.pickme
     http:
       paths:
-      - path: /
+      - path: /cadvisor
         pathType: Prefix
         backend:
           service:

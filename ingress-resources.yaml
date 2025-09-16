@@ -12,7 +12,7 @@ spec:
   - host: png.prometheus
     http:
       paths:
-      - path: /
+      - path: /prometheus
         pathType: Prefix
         backend:
           service:
@@ -35,7 +35,7 @@ spec:
   - host: png.grafana
     http:
       paths:
-      - path: /
+      - path: /grafana
         pathType: Prefix
         backend:
           service:
@@ -58,7 +58,7 @@ spec:
   - host: png.loki
     http:
       paths:
-      - path: /
+      - path: /grafana
         pathType: Prefix
         backend:
           service:
@@ -81,7 +81,7 @@ spec:
   - host: png.cadvisor
     http:
       paths:
-      - path: /
+      - path: /cadvisor
         pathType: Prefix
         backend:
           service:

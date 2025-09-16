@@ -7,10 +7,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: png.loki
+  - host: png.pickme
     http:
       paths:
-      - path: /
+      - path: /loki
         pathType: Prefix
         backend:
           service:

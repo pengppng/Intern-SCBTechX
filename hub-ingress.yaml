@@ -1,10 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: hub-ingress
+  name: png-pickme-ingress
   namespace: hub
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
@@ -32,27 +30,6 @@ spec:
             name: prometheus-proxy
             port:
               number: 80
-      - path: /cadvisor
-        pathType: Prefix
-        backend:
-          service:
-            name: cadvisor-proxy
-            port:
-              number: 8080
-      - path: /elasticsearch
-        pathType: Prefix
-        backend:
-          service:
-            name: elasticsearch-proxy
-            port:
-              number: 9200
-      - path: /kibana
-        pathType: Prefix
-        backend:
-          service:
-            name: kibana-proxy
-            port:
-              number: 5601
       - path: /loki
         pathType: Prefix
         backend:

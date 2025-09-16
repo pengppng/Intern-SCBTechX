@@ -4,14 +4,14 @@ grafana:
   service:
     type: ClusterIP
   ingress:
-    enabled: false
+    enabled: true
 
 prometheus:
   enabled: true
   service:
     type: ClusterIP
   ingress:
-    enabled: false
+    enabled: true
 
 alertmanager:
   enabled: true

@@ -10,7 +10,7 @@ spec:
   - host: png.grafana
     http:
       paths:
-      - path: /
+      - path: /grafana
         pathType: Prefix
         backend:
           service:
