@@ -25,7 +25,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: your-dockerhub-username/static-website:latest
+          tags: pengppng/static-website:latest
+
 
   deploy:
     runs-on: ubuntu-latest
