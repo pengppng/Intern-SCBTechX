@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preecr-deployment
+  namespace: default
+  labels:
+    app: preecr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: preecr
+  template:
+    metadata:
+      labels:
+        app: preecr
+    spec:
+      containers:
+        - name: preecr
+          image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          imagePullPolicy: Always
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: preecr-service
+  namespace: default
+  labels:
+    app: preecr
+spec:
+  type: LoadBalancer
+  selector:
+    app: preecr
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

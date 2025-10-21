@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preecr-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: preecr
+  template:
+    metadata:
+      labels:
+        app: preecr
+    spec:
+      containers:
+      - name: preecr
+        image: 871762481972.dkr.ecr.ap-southeast-1.amazonaws.com/preecr:latest
+        # imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: preecr-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: preecr
