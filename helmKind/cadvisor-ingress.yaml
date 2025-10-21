@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cadvisor-ingress
+  namespace: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      - path: /cadvisor
+        pathType: Prefix
+        backend:
+          service:
+            name: cadvisor
+            port:
+              number: 8080

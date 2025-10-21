@@ -1,0 +1,66 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: png-pickme-main
+  namespace: hub
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      # Default homepage - hub dashboard
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: hub
+            port:
+              number: 80
+      # Monitoring services (cross-namespace)
+      - path: /grafana(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: grafana.monitoring.svc.cluster.local
+            port:
+              number: 80
+      - path: /prometheus(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: prometheus-server.monitoring.svc.cluster.local
+            port:
+              number: 80
+      - path: /loki(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: loki-stack.monitoring.svc.cluster.local
+            port:
+              number: 3100
+      - path: /cadvisor(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: cadvisor.monitoring.svc.cluster.local
+            port:
+              number: 8080
+      # Logging services (cross-namespace)
+      - path: /elasticsearch(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: elasticsearch.logging.svc.cluster.local
+            port:
+              number: 9200
+      - path: /kibana(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: kibana.logging.svc.cluster.local
+            port:
+              number: 5601

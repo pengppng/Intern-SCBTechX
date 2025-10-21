@@ -1,0 +1,33 @@
+grafana:
+  enabled: true
+  adminPassword: admin123
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+
+prometheus:
+  enabled: true
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+
+alertmanager:
+  enabled: true
+  service:
+    type: ClusterIP
+
+nodeExporter:
+  enabled: true
+
+prometheusOperator:
+  enabled: true
+  admissionWebhooks:
+    enabled: false
+
+kubeStateMetrics:
+  enabled: true
+
+defaultRules:
+  create: true

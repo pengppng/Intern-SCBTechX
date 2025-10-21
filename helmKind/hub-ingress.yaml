@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: png-pickme-ingress
+  namespace: hub
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: png.pickme
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hub
+            port:
+              number: 80
+      - path: /grafana
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana-proxy
+            port:
+              number: 80
+      - path: /prometheus
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus-proxy
+            port:
+              number: 80
+      - path: /loki
+        pathType: Prefix
+        backend:
+          service:
+            name: loki-proxy
+            port:
+              number: 3100

@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-proxy
+  namespace: hub
+spec:
+  type: ExternalName
+  externalName: grafana.monitoring.svc.cluster.local
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-proxy
+  namespace: hub
+spec:
+  type: ExternalName
+  externalName: prometheus-server.monitoring.svc.cluster.local
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loki-proxy
+  namespace: hub
+spec:
+  type: ExternalName
+  externalName: loki-stack.monitoring.svc.cluster.local
+  ports:
+  - port: 3100
+    targetPort: 3100
